@@ -3,6 +3,7 @@
 The file contains all the code to launch a training for the triplet loss facial
 recognition model and can be call with python3 -m tripletface.train --help.
 """
+import tkinter
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse

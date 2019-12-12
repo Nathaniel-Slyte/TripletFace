@@ -33,10 +33,10 @@ class Encoder( nn.Module ):
         """
         super( Encoder, self ).__init__( )
         self.z_size    = z_size
-        self.resnet    = models.resnet18( pretrained = True )
+        self.inception   = models.inception_v3( pretrained = True, aux_logits = False )
         self._disable_grad( )
-        n_features     = self.resnet.fc.in_features
-        self.resnet.fc = nn.Linear( n_features, z_size )
+        n_features     = self.inception.fc.in_features
+        self.inception.fc = nn.Linear( n_features, z_size )
 
     def _disable_grad( self: 'Encoder' ) -> None:
         """_disable_grad
@@ -44,7 +44,7 @@ class Encoder( nn.Module ):
         Disable all gradients for the model to freeze resnet for finetuning.
         Operation needs to happen before insertion of the new fc module.
         """
-        for param in self.resnet.parameters( ):
+        for param in self.inception.parameters( ):
             param.requires_grad = False
 
     def forward( self: 'Encoder', X: torch.Tensor ) -> torch.Tensor:
@@ -63,4 +63,4 @@ class Encoder( nn.Module ):
         X: torch.Tensor
            Output tensor [ Batch, z_size ]
         """
-        return self.resnet( X )
+        return self.inception( X )
