@@ -93,7 +93,7 @@ All of them are in the folder "peoples_data".
 Centroid is a mean of positions of the tensors. treshold is the sum of all of them divided by 0.005 to
 minimize it.
 
-![TSNE_Latent_ of the 7th people, for calcul of centroid and treshold](peoples_vizualisation_7.png)
+![TSNE_Latent_ of the 7th people, for calcul of centroid and treshold](peoples_data/peoples_vizualisation_7.png)
 
 ## Inference
 
