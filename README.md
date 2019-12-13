@@ -90,6 +90,10 @@ It is possible to generate a centrois and treshold for each peoples in the datas
 with the script "peoples_data.py". It takes the sames arguments as for training and
 generate a centroids, treshold and visualization of the tensors used.
 All of them are in the folder "peoples_data".
+Centroid is a mean of positions of the tensors. treshold is the sum of all of them divided by 0.005 to
+minimize it.
+
+![TSNE_Latent_ of the 7th people, for calcul of centroid and treshold](peoples_vizualisation_7.png)
 
 ## Inference
 
