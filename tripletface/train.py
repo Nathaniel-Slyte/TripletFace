@@ -154,7 +154,7 @@ for e in tqdm( range( epochs ), desc = 'Epoch' ):
             data            = torch.cat( [ datum for datum in   data ], axis = 0 )
             labels          = labels.cuda( )
             data            = data.cuda( )
-
+            
             embeddings      = encoder( data )
             loss, frac_pos  = miner( labels, embeddings )
 
