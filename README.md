@@ -12,9 +12,12 @@ going to be maintained in any sort.
 
 The proposed architecture is pretty simple and does not implement state of the
 art performances. The chosen architecture is a fine tuning example of the
-resnet18 CNN model. The model includes the freezed CNN part of resnet, and its
+inception_V3 CNN model. The model includes the freezed CNN part of inception, and its
 FC part has been replaced to be trained to output latent variables for the
 facial image input.
+
+The choice of Inception_V3 was made after comparaison of all CNN models availables
+in the library torchvision. This model is currently the one with the best result.
 
 The dataset needs to be formatted in the following form:
 ```
@@ -71,22 +74,31 @@ optional arguments:
   -r N_SAMPLES, --n_samples N_SAMPLES
 ```
 
+The current model.pt is the result of precedent try.
+
+## JIT compile
+
+To JIT compile the model:
+  - Train the model
+  - Jun the jit.py
+The jit compile will create a "scriptmodule.pt". it must be run independently of
+the training to cluster all options.
+
+## Centroid and treshold
+
+It is possible to generate a centrois and treshold for each peoples in the dataset
+with the script "peoples_data.py". It takes the sames arguments as for training and
+generate a centroids, treshold and visualization of the tensors used.
+All of them are in the folder "peoples_data".
+
+## Inference
+
+The inference script currently doesn't works. It use the cam of the computer to
+identify you dynamically.
+
+
 ## References
 
 * Resnet Paper: [Arxiv](https://arxiv.org/pdf/1512.03385.pdf)
 * Triplet Loss Paper: [Arxiv](https://arxiv.org/pdf/1503.03832.pdf)
 * TripletTorch Helper Module: [Github](https://github.com/TowardHumanizedInteraction/TripletTorch)
-
-## Todo ( For the students )
-
-**Deadline Decembre 13th 2019 at 12pm**
-
-The students are asked to complete the following tasks:
-* Fork the Project
-* Improve the model by playing with Hyperparameters and by changing the Architecture ( may not use resnet )
-* JIT compile the model ( see [Documentation](https://pytorch.org/docs/stable/jit.html#torch.jit.trace) )
-* Add script to generate Centroids and Thesholds using few face images from one person
-* Generate those for each of the student included in the dataset
-* Add inference script in order to use the final model
-* Change README.md in order to include the student choices explained and a table containing the Centroids and Thesholds for each student of the dataset with a vizualisation ( See the one above )
-* Send the github link by mail
