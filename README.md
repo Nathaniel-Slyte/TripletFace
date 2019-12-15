@@ -97,9 +97,16 @@ minimize it.the hyperparameter has been found by testing in order to get a great
 
 ## Inference
 
-The inference script currently doesn't works. It use the cam of the computer to
-identify you dynamically.
+The inference script currently need 2 things, the path to the image you want to test and his size as optionnal.
+it output the embeddings, the test to get the name of the person hasn't be done yet.
+We will use centroids and trresholds calculated before to find the person
 
+usage: inference.py [-h] -s IMAGE_PATH [-i INPUT_SIZE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s DATASET_PATH, --dataset_path DATASET_PATH
+  -i INPUT_SIZE, --input_size INPUT_SIZE
 
 ## References
 
