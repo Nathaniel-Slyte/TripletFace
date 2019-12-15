@@ -86,14 +86,14 @@ the training to cluster all options.
 
 ## Centroid and treshold
 
-It is possible to generate a centrois and treshold for each peoples in the dataset
+It is possible to generate a centroid and treshold for each peoples in the dataset
 with the script "peoples_data.py". It takes the sames arguments as for training and
-generate a centroids, treshold and visualization of the tensors used.
+generate a centroids, treshold and visualization of them, centroid is the position and treshold the size.
 All of them are in the folder "peoples_data".
-Centroid is a mean of positions of the tensors. treshold is the sum of all of them divided by 0.005 to
-minimize it.
+Centroid is a mean of positions of the tensors. treshold is the sum of all of them divided by 0.5 to
+minimize it.the hyperparameter has been found by testing in order to get a great visualization
 
-![TSNE_Latent_ of the 7th people, for calcul of centroid and treshold](peoples_data/peoples_vizualisation_7.png)
+![Centroids and Tresholds](peoples_data/C-T_visualization.png)
 
 ## Inference
 

@@ -36,7 +36,7 @@ parser.add_argument( '-r', '--n_samples',     type = int,   default  = 6 )
 args          = parser.parse_args( )
 
 dataset_path  = args.dataset_path
-save_path    = args.save_path
+save_path     = args.save_path
 
 input_size    = args.input_size
 latent_size   = args.latent_size
@@ -91,14 +91,21 @@ This part define the model and load his weights.
 """
 
 print("Loading model & weight...\n")
-model = Encoder(64).cuda() # embeding_size = 64
-weight = torch.load("model.pt")['model']
+model     = Encoder(64).cuda() # embeding_size = 64
+weight    = torch.load("model.pt")['model']
 model.load_state_dict(weight)
 print("Model & weight loaded\n")
-fig = plt.figure( figsize = ( 8, 8 ) )
-ax  = fig.add_subplot( 111 )
 
-for mad in range(nb_peoples):
+np.random.seed(123456789)
+fig       = plt.figure( figsize = ( 8, 8 ) )
+ax        = fig.add_subplot( 111 )
+colors    = np.random.rand(nb_peoples)
+
+centroid  = np.zeros((nb_peoples, latent_size))
+tresholds = np.zeros(nb_peoples)
+
+
+for pl in range(nb_peoples):
     """dataset
 
     This part describes all the triplet dataset to pass inside the model.
@@ -107,7 +114,7 @@ for mad in range(nb_peoples):
     dataset       = {
         'train': TripletDataset(
             np.array( folder[ 'train' ].labels ),
-            lambda i: folder[ 'train' ][ samples[mad][i] ][ 1 ],
+            lambda i: folder[ 'train' ][ samples[pl][i] ][ 1 ],
             batch_sample,
             1
         )
@@ -131,8 +138,6 @@ for mad in range(nb_peoples):
 
     This part give the samples to the dataset in order to generate a tensor
     """
-    test_embeddings = [ ]
-    test_labels     = [ ]
 
     for b, batch in enumerate( loader[ 'train' ] ):
         labels, data    = batch
@@ -141,45 +146,38 @@ for mad in range(nb_peoples):
 
         embeddings      = model( data.cuda() ).detach( ).cpu( ).numpy( )
 
-        test_embeddings.append( embeddings )
-        test_labels.append( labels )
-
-
-    test_embeddings = np.concatenate( test_embeddings, axis = 0 )
-    test_labels     = np.concatenate(     test_labels, axis = 0 )
-
-    if latent_size > 2:
-        test_embeddings = TSNE( n_components = 2 ).fit_transform( test_embeddings )
-
-    ax.clear( )
-    ax.scatter(
-        test_embeddings[ :, 0 ],
-        test_embeddings[ :, 1 ],
-        c = test_labels
-    )
-
-
     """Calculus & save
 
-    This part calculate the treshold ans centroid and save them with a figure of
-    the tensor
+    This part calculate the treshold and centroid and save them
     """
-    centroid  = []
-    tresholds = 0
+
     for i in range(latent_size):
-        crazy_night = 0
         for j in range(batch_size):
-            crazy_night += embeddings[j,i]
-            tresholds += embeddings[j,i]
-        centroid.append(crazy_night/batch_size)
-    tresholds = abs(tresholds * 0.005) # Chuuuuut, c'est Steven qui m'as dit que ça serait un bon chiffre
+            centroid[pl,i] += embeddings[j,i] # calculate for each axis the average to get the centroid
+            tresholds[pl] += embeddings[j,i] # add all positions in order to get a distance from 0, used as reference for the treshold
+        centroid[pl,i] = centroid[pl,i]/batch_size
+    tresholds[pl] = abs(tresholds[pl] * 0.5) # Chuuuuut, c'est Steven qui m'as dit que ça serait un bon chiffre. Nan sans dec, je l'ai trouvé empiriquement, j'ai fait plusieurs test et choisi ce que je trouvais bien pour un bon visuel
 
     fd = os.open("peoples_data/peoples_data.txt", os.O_APPEND|os.O_RDWR) # Steven c'est la peluche, elle me parle, la plante verte aussi
-    line = str.encode(f'People {mad}: \nTresholds = {tresholds}\nCentroid = {centroid}\n\n')
+    line = str.encode(f'People {pl}: \nTresholds = {tresholds}\nCentroid = {centroid[pl,:]}\n\n')
     os.write(fd, line)
     os.close(fd)
 
-    fig.canvas.draw( ) # y a Zackarie qui ronfle, y dort alors que je bosse, le bataaaaaaaard !
-    fig.savefig( os.path.join( save_path, f'peoples_vizualisation_{mad}.png' ) )
+    print(f'people {pl} done\n')
 
-    print(f'people {mad} done\n')
+
+""" Plot centroid and tresholds
+
+"""
+show_centroid = TSNE( n_components = 2 ).fit_transform( centroid )
+
+ax.scatter(
+    show_centroid[ :, 0 ],
+    show_centroid[ :, 1 ],
+
+    s = tresholds,
+    c = colors
+)
+
+fig.canvas.draw()
+fig.savefig( os.path.join( save_path, f'C-T_visualization.png' ) )
